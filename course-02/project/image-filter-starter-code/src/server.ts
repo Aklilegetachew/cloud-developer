@@ -31,6 +31,29 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
   
+
+  // solution for the todos
+
+  app.get("/filteredimage",(req,res) =>{
+
+    const imageLink = req.query.image_url
+
+    if(imageLink == '' || !imageLink){
+      return res.status(400).json({message: "Link is not valid"})
+    }else{
+      filterImageFromURL(imageLink).then((result)=>{
+        res.status(200).sendFile(result, ()=>{
+          deleteLocalFiles([result])
+        })
+      }).catch((err)=>{
+          res.status(400).json({message: "error filtering"+ err +""})
+      })
+    }
+
+
+  })
+  
+  
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
