@@ -34,19 +34,19 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   // solution for the todos
 
-  app.get("/filteredimage",(req,res) =>{
+  app.get("/filteredimage",(req: Request ,res: Response) =>{
 
     const imageLink = req.query.image_url
 
     if(imageLink == '' || !imageLink){
-      return res.status(400).json({message: "Link is not valid"})
+      return res.status(code : 400).json(body :{message: "Link is not valid"})
     }else{
-      filterImageFromURL(imageLink).then((result)=>{
-        res.status(200).sendFile(result, ()=>{
-          deleteLocalFiles([result])
+      filterImageFromURL(imageLink).then((result : string)=>{
+        res.status(200).sendFile(result, fn :()=>{
+          deleteLocalFiles(file : [result])
         })
       }).catch((err)=>{
-          res.status(400).json({message: "error filtering"+ err +""})
+          res.status(code :400).json(body: {message: "error filtering"+ err +""})
       })
     }
 
