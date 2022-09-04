@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
-
+import {isWebUri} from 'valid-url';
 (async () => {
 
   // Init the Express application
@@ -31,22 +31,23 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
   
-
+  
   // solution for the todos
 
-  app.get("/filteredimage",(req: Request ,res: Response) =>{
+  app.get("/filteredimage",async ( req: Request <RequestParams, ResponseBody, RequestBody, RequestQuery>, res: Response ) =>{
 
-    const imageLink = req.query.image_url
+    const { imageLink } = req.query
 
-    if(imageLink == '' || !imageLink){
-      return res.status(code : 400).json(body :{message: "Link is not valid"})
+    
+    if(imageLink == '' || !imageLink || !isWebUri(imageLink)) {
+      return res.status(400).json({message: "Link is not valid"})
     }else{
-      filterImageFromURL(imageLink).then((result : string)=>{
-        res.status(200).sendFile(result, fn :()=>{
-          deleteLocalFiles(file : [result])
+      filterImageFromURL(image_url).then((result)=>{
+        res.status(200).sendFile(result, ()=>{
+          deleteLocalFiles([result])
         })
       }).catch((err)=>{
-          res.status(code :400).json(body: {message: "error filtering"+ err +""})
+          res.status(400).json({message: "error filtering"+ err +""})
       })
     }
 
