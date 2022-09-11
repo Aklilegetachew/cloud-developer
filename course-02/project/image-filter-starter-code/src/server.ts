@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { filterImageFromURL, deleteLocalFiles } from "./util/util";
-const isWebUri = require("valid-url");
+
 
 interface ResponseBody {}
 
