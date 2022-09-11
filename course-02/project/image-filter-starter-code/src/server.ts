@@ -1,15 +1,23 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
-import {isWebUri} from 'valid-url';
-(async () => {
+import express, { Router, Request, Response } from "express";
+import bodyParser from "body-parser";
+import { filterImageFromURL, deleteLocalFiles } from "./util/util";
+const isWebUri = require("valid-url");
 
+interface ResponseBody {}
+
+interface RequestBody {}
+
+interface RequestQuery {
+  image_url: string;
+}
+
+(async () => {
   // Init the Express application
   const app = express();
 
   // Set the network port
   const port = process.env.PORT || 8082;
-  
+
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
@@ -30,41 +38,36 @@ import {isWebUri} from 'valid-url';
   /**************************************************************************** */
 
   //! END @TODO1
-  
-  
+
   // solution for the todos
 
-  app.get("/filteredimage",async ( req: Request <RequestParams, ResponseBody, RequestBody, RequestQuery>, res: Response ) =>{
-
-    const { imageLink } = req.query
-
-    
-    if(imageLink == '' || !imageLink || !isWebUri(imageLink)) {
-      return res.status(400).json({message: "Link is not valid"})
-    }else{
-      filterImageFromURL(image_url).then((result)=>{
-        res.status(200).sendFile(result, ()=>{
-          deleteLocalFiles([result])
+  app.get("/filteredimage", async (req: Request, res: Response) => {
+    const { image_url } = req.query;
+    console.log(image_url);
+    if (image_url == "" || !image_url) {
+      return res.status(400).json({ message: "Link is not valid" });
+    } else {
+      filterImageFromURL(image_url)
+        .then((result) => {
+          res.status(200).sendFile(result, () => {
+            deleteLocalFiles([result]);
+          });
         })
-      }).catch((err)=>{
-          res.status(400).json({message: "error filtering"+ err +""})
-      })
+        .catch((err) => {
+          res.status(400).json({ message: "error filtering" + err + "" });
+        });
     }
+  });
 
-
-  })
-  
-  
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
-    res.send("try GET /filteredimage?image_url={{}}")
-  } );
-  
+  app.get("/", async (req, res) => {
+    res.send("try GET /filteredimage?image_url={{}}");
+  });
 
   // Start the Server
-  app.listen( port, () => {
-      console.log( `server running http://localhost:${ port }` );
-      console.log( `press CTRL+C to stop server` );
-  } );
+  app.listen(port, () => {
+    console.log(`server running http://localhost:${port}`);
+    console.log(`press CTRL+C to stop server`);
+  });
 })();
